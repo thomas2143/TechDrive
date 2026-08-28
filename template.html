@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Selective routing — you choose the precision, the data returns the coverage</title>
+<meta name="description" content="An interactive calibration instrument for automated ticket routing. Set the routing precision you require and see what it costs in coverage.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ground:#E8EBEE; --panel:#FDFDFC; --panel-sunk:#F1F3F5;
+  --ink:#141C24; --muted:#5C6B78; --rule:#C3CAD1;
+  --instrument:#1F5673; --bound:#B22D1F; --hold:#3F6E4F; --brass:#C9A227;
+  --display:'Archivo',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,serif;
+  --data:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:var(--body); font-size:17px; line-height:1.62;
+  background-image:linear-gradient(var(--rule) 1px,transparent 1px),linear-gradient(90deg,var(--rule) 1px,transparent 1px);
+  background-size:56px 56px; background-position:-1px -1px;
+}
+body::before{content:"";position:fixed;inset:0;background:var(--ground);opacity:.88;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;max-width:1060px;margin:0 auto;padding:0 24px 96px}
+
+.eyebrow{
+  font-family:var(--data); font-size:11px; font-weight:500; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--muted);
+}
+h1,h2,h3{font-family:var(--display);font-weight:700;letter-spacing:-.022em;line-height:1.08;margin:0}
+h1{font-size:clamp(2.1rem,5.4vw,3.9rem)}
+h2{font-size:clamp(1.35rem,2.9vw,2rem);letter-spacing:-.018em}
+h3{font-size:1rem;font-weight:600;letter-spacing:.01em}
+
+header.hero{padding:88px 0 56px;border-bottom:2px solid var(--ink)}
+header.hero h1{max-width:17ch;margin:22px 0 0}
+header.hero h1 em{font-style:normal;color:var(--instrument)}
+.lede{max-width:60ch;margin:26px 0 0;font-size:1.12rem;color:#31404C}
+.hero-meta{
+  display:flex;flex-wrap:wrap;gap:26px;margin-top:34px;
+  font-family:var(--data);font-size:12px;color:var(--muted)
+}
+.hero-meta b{color:var(--ink);font-weight:600}
+
+section{padding:64px 0;border-bottom:1px solid var(--rule)}
+.sec-head{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:8px}
+.sec-note{max-width:62ch;color:#31404C;margin:14px 0 34px}
+
+/* ---- instrument panel ---- */
+.panel{
+  background:var(--panel);border:1px solid var(--rule);
+  box-shadow:0 1px 0 rgba(20,28,36,.05),0 14px 34px -26px rgba(20,28,36,.5);
+}
+.dial{display:grid;grid-template-columns:1fr 300px;gap:0}
+.dial-main{padding:30px 32px 26px;border-right:1px solid var(--rule)}
+.dial-side{padding:30px 26px;background:var(--panel-sunk);display:flex;flex-direction:column;gap:22px}
+
+.control label{display:block;font-family:var(--data);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:34px;background:transparent;cursor:pointer;margin:0
+}
+input[type=range]:focus-visible{outline:2px solid var(--instrument);outline-offset:4px}
+input[type=range]::-webkit-slider-runnable-track{height:2px;background:var(--ink)}
+input[type=range]::-moz-range-track{height:2px;background:var(--ink)}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:26px;background:var(--instrument);
+  border:0;border-radius:1px;margin-top:-12px;transition:transform .12s
+}
+input[type=range]::-moz-range-thumb{width:16px;height:26px;background:var(--instrument);border:0;border-radius:1px}
+input[type=range]:active::-webkit-slider-thumb{transform:scaleY(1.12)}
+.ticks{display:flex;justify-content:space-between;font-family:var(--data);font-size:11px;color:var(--muted);margin-top:-4px}
+.ticks span{flex:1;text-align:center}
+.ticks span:first-child{text-align:left}.ticks span:last-child{text-align:right}
+.ticks span[data-on="1"]{color:var(--ink);font-weight:600}
+
+.readout{margin-top:30px;display:flex;align-items:flex-end;gap:36px;flex-wrap:wrap}
+.metric-label{font-family:var(--data);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.metric-value{font-family:var(--data);font-weight:600;font-size:clamp(2.6rem,7vw,4.1rem);line-height:1;letter-spacing:-.03em;color:var(--instrument);font-variant-numeric:tabular-nums}
+.metric-sub{font-family:var(--data);font-size:12px;color:var(--muted);margin-top:8px}
+.metric-small .metric-value{font-size:1.9rem;color:var(--ink)}
+
+/* certificate stamp: the signature element */
+.stamp{
+  border:2px solid var(--hold);padding:16px 18px;position:relative;
+  transition:border-color .3s,color .3s,opacity .3s
+}
+.stamp .stamp-word{font-family:var(--display);font-weight:700;font-size:1.05rem;letter-spacing:.06em;text-transform:uppercase;color:var(--hold);line-height:1.1}
+.stamp .stamp-line{font-family:var(--data);font-size:12px;color:var(--muted);margin-top:9px}
+.stamp .stamp-line b{color:var(--ink);font-weight:600}
+.stamp.refused{border-color:var(--bound)}
+.stamp.refused .stamp-word{color:var(--bound)}
+
+.side-block h3{margin-bottom:8px}
+.side-block p{margin:0;font-size:.94rem;color:#31404C;line-height:1.5}
+
+/* de-energised state when nothing can be certified */
+.dial.dead .metric-value{color:var(--muted)}
+.dial.dead .plot-live{stroke:var(--muted)}
+.dial.dead .marker-certified{opacity:0}
+
+.plot{margin-top:26px;width:100%;height:auto;display:block;overflow:visible}
+.plot text{font-family:var(--data);font-size:10px;fill:var(--muted)}
+.plot .axis{stroke:var(--rule);stroke-width:1}
+.plot .plot-live{fill:none;stroke:var(--instrument);stroke-width:2}
+.plot .marker-certified{transition:opacity .3s}
+
+/* ---- comparison ---- */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.compare>div{background:var(--panel);padding:26px 26px 28px}
+.compare .verdict{font-family:var(--data);font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:16px}
+.compare .good{color:var(--hold)}
+.compare .bad{color:var(--bound)}
+.big-pct{font-family:var(--data);font-weight:600;font-size:2.6rem;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.compare p{font-size:.95rem;color:#31404C;margin:14px 0 0}
+
+/* ---- drift ---- */
+.switch{display:inline-flex;border:1px solid var(--ink);margin-bottom:26px}
+.switch button{
+  font-family:var(--data);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  padding:11px 18px;background:transparent;border:0;cursor:pointer;color:var(--muted)
+}
+.switch button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.switch button:focus-visible{outline:2px solid var(--instrument);outline-offset:2px}
+
+.gauges{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:26px}
+.gauge .metric-label{margin-bottom:12px}
+.bar{position:relative;height:52px;background:var(--panel-sunk);border:1px solid var(--rule)}
+.bar-fill{position:absolute;left:0;top:0;bottom:0;background:var(--instrument);transition:width .45s cubic-bezier(.2,.7,.3,1)}
+.bar-fill.error{background:var(--hold)}
+.bar-fill.error.over{background:var(--bound)}
+.bound-line{position:absolute;top:-6px;bottom:-6px;width:2px;background:var(--bound)}
+.bound-tag{position:absolute;top:-22px;transform:translateX(-50%);font-family:var(--data);font-size:10px;color:var(--bound);white-space:nowrap}
+.gauge-read{font-family:var(--data);font-size:13px;color:var(--muted);margin-top:10px}
+.gauge-read b{color:var(--ink);font-weight:600;font-size:1.05rem}
+.drift-verdict{
+  margin-top:26px;padding:16px 18px;border-left:3px solid var(--hold);background:var(--panel);
+  font-size:.97rem;color:#31404C
+}
+.drift-verdict.broken{border-left-color:var(--bound)}
+.drift-verdict b{color:var(--ink)}
+
+/* ---- evidence ---- */
+.ev{background:var(--panel);border:1px solid var(--rule);padding:24px 26px;margin-bottom:16px}
+.ev-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.tag{font-family:var(--data);font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;border:1px solid currentColor}
+.tag.routed{color:var(--hold)}
+.tag.held{color:var(--brass)}
+.ev-cat{font-family:var(--data);font-size:14px;font-weight:600}
+.ev-conf{font-family:var(--data);font-size:12px;color:var(--muted);margin-left:auto}
+.ev-text{font-size:.95rem;color:#31404C;margin:0 0 18px;padding-left:14px;border-left:2px solid var(--rule)}
+.ev-because{font-family:var(--data);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.nb{display:flex;gap:14px;align-items:baseline;padding:9px 0;border-top:1px solid var(--rule);font-size:.88rem;color:#31404C}
+.nb-cat{font-family:var(--data);font-size:12px;font-weight:600;min-width:96px}
+.nb-sim{font-family:var(--data);font-size:11px;color:var(--muted);margin-left:auto;white-space:nowrap}
+
+/* ---- footer ---- */
+footer{padding:56px 0 0;font-size:.95rem;color:#31404C}
+footer a{color:var(--instrument)}
+.limits{max-width:64ch}
+.limits li{margin-bottom:10px}
+
+@media (max-width:620px){
+  .ticks{font-size:9.5px}
+  #sev-ticks span:nth-child(even){visibility:hidden}
+}
+@media (max-width:860px){
+  .dial{grid-template-columns:1fr}
+  .dial-main{border-right:0;border-bottom:1px solid var(--rule)}
+  .compare,.gauges{grid-template-columns:1fr}
+  header.hero{padding:56px 0 40px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">Selective classification &middot; calibration instrument</div>
+  <h1>You choose the precision. The data returns <em>the coverage</em>.</h1>
+  <p class="lede">Automating ticket routing is not one number. Demand a higher routing accuracy and fewer tickets qualify for automation. This instrument makes that trade visible, certifies a confidence threshold that holds on tickets nobody has seen, and refuses when the data cannot support what you asked for.</p>
+  <div class="hero-meta">
+    <span><b id="m-classes">—</b> categories</span>
+    <span><b id="m-index">—</b> archive documents</span>
+    <span><b id="m-test">—</b> held-out tickets</span>
+    <span><b id="m-acc">—</b> accuracy without abstention</span>
+  </div>
+</header>
+
+<section id="dial-section">
+  <div class="sec-head"><h2>The dial</h2><span class="eyebrow">Drag it</span></div>
+  <p class="sec-note">Set the routing precision you require. Coverage is what the measurement returns, not something anyone gets to promise.</p>
+
+  <div class="panel dial" id="dial">
+    <div class="dial-main">
+      <div class="control">
+        <label for="target">Routing precision required</label>
+        <input type="range" id="target" min="0" max="4" step="1" value="1" aria-describedby="readout-cov">
+        <div class="ticks" id="ticks"></div>
+      </div>
+
+      <div class="readout">
+        <div>
+          <div class="metric-label">Tickets routed automatically</div>
+          <div class="metric-value" id="cov">—</div>
+          <div class="metric-sub" id="cov-sub">—</div>
+        </div>
+        <div class="metric-small">
+          <div class="metric-label">Measured error</div>
+          <div class="metric-value" id="err">—</div>
+          <div class="metric-sub">on the routed tickets</div>
+        </div>
+      </div>
+
+      <svg class="plot" id="plot" viewBox="0 0 640 240" role="img" aria-labelledby="plot-title">
+        <title id="plot-title">Precision against coverage across every confidence threshold</title>
+      </svg>
+    </div>
+
+    <div class="dial-side">
+      <div class="stamp" id="stamp">
+        <div class="stamp-word" id="stamp-word">Certified</div>
+        <div class="stamp-line" id="stamp-line">—</div>
+      </div>
+      <div class="side-block">
+        <h3 id="side-title">What the stamp means</h3>
+        <p id="side-body">The threshold was selected by risk control on a calibration sample the model never trained on, with the family-wise error across the whole threshold grid held at 10%.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><h2>Certified against tuned</h2></div>
+  <p class="sec-note" id="cmp-note">The obvious alternative is to sweep the cutoff on held-out data and keep whichever one clears the target. It reports better coverage. Over 15 independent splits it also misses the target it promised, repeatedly, and no single run reveals that.</p>
+  <div class="compare">
+    <div>
+      <div class="verdict good">Risk control</div>
+      <div class="big-pct" id="cmp-cert-cov">—</div>
+      <div class="metric-sub">mean coverage across 15 splits</div>
+      <p><b id="cmp-cert-breach">—</b> of those splits breached the target.</p>
+    </div>
+    <div>
+      <div class="verdict bad">Threshold tuning</div>
+      <div class="big-pct" id="cmp-naive-cov">—</div>
+      <div class="metric-sub">mean coverage across 15 splits</div>
+      <p><b id="cmp-naive-breach">—</b> of those splits breached the target. It buys the extra coverage by not paying for a guarantee.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><h2>Two kinds of drift</h2><span class="eyebrow">Only one is visible</span></div>
+  <p class="sec-note">A certified threshold assumes incoming tickets resemble the calibration sample. Live traffic drifts, and how it drifts decides whether the guarantee survives. The threshold below stays fixed at whatever the dial certified. Nothing is recalibrated.</p>
+
+  <div class="switch" role="group" aria-label="Drift mode">
+    <button id="mode-mix" aria-pressed="true">The mix moves</button>
+    <button id="mode-tax" aria-pressed="false">The taxonomy changes</button>
+  </div>
+
+  <div class="panel" style="padding:28px 30px 30px">
+    <div class="control">
+      <label for="severity" id="sev-label">Shift severity</label>
+      <input type="range" id="severity" min="0" max="5" step="1" value="0">
+      <div class="ticks" id="sev-ticks"></div>
+    </div>
+
+    <div class="gauges">
+      <div class="gauge">
+        <div class="metric-label">Coverage</div>
+        <div class="bar"><div class="bar-fill" id="g-cov"></div></div>
+        <div class="gauge-read">routed automatically: <b id="g-cov-v">—</b></div>
+      </div>
+      <div class="gauge">
+        <div class="metric-label">Error on routed tickets</div>
+        <div class="bar">
+          <div class="bar-fill error" id="g-err"></div>
+          <div class="bound-line" id="g-bound"><span class="bound-tag" id="g-bound-tag">bound</span></div>
+        </div>
+        <div class="gauge-read">measured: <b id="g-err-v">—</b></div>
+      </div>
+    </div>
+
+    <div class="drift-verdict" id="drift-verdict">—</div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><h2>Why it said that</h2></div>
+  <p class="sec-note">Every decision carries the archive documents that produced it. A category that gets disputed can be inspected instead of argued about, which is the difference between analytics a manager is asked to trust and analytics a manager can audit.</p>
+  <div id="evidence"></div>
+</section>
+
+<footer>
+  <h3 style="margin-bottom:14px">What this is not</h3>
+  <ul class="limits">
+    <li>The encoder here is TF-IDF with truncated SVD, not the multilingual sentence model that belongs in production. Swapping it moves every accuracy number on this page. It does not change whether the threshold selection is valid, which is the thing being tested.</li>
+    <li>The corpus is Reuters newswire: well written, consistently labelled, monolingual. Support tickets are none of those. A published comparable project on Russian-language IT support reached 84% precision at 61% coverage, against human operators at 75%.</li>
+    <li>Two findings in an earlier draft of this work were artifacts of bugs the test suite later caught, including one that had already been recommended for a client proposal. The report says which.</li>
+  </ul>
+  <p style="margin-top:26px"><a href="../reports/REPORT.md">Full measurement report</a> &nbsp;&middot;&nbsp; <a href="https://github.com/thomas2143">Source and tests</a></p>
+  <p class="eyebrow" style="margin-top:32px">Thomas Hotton &middot; August 2026</p>
+</footer>
+
+</div>
+<script>
+const DATA = /*__DATA__*/null;
+
+const TARGETS=["0.10","0.05","0.03","0.02","0.01"];
+const pct=x=>(x*100).toFixed(1)+"%";
+const $=id=>document.getElementById(id);
+/* Reuters text carries angle brackets, e.g. "<Dowa Mining Co Ltd>". Injected
+   raw they parse as unknown tags and swallow the surrounding text. */
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+/* ---------- header ---------- */
+$("m-classes").textContent=DATA.meta.classes;
+$("m-index").textContent=DATA.meta.index.toLocaleString();
+$("m-test").textContent=DATA.meta.test.toLocaleString();
+$("m-acc").textContent=pct(DATA.meta.accuracy);
+
+/* ---------- dial ---------- */
+const ticks=$("ticks");
+TARGETS.forEach(a=>{const s=document.createElement("span");s.textContent=(100-a*100).toFixed(0)+"%";ticks.appendChild(s);});
+
+function drawPlot(cert,naive){
+  const svg=$("plot"), W=640,H=240,L=44,R=14,T=14,B=30;
+  const pts=[];
+  DATA.base.coverage.forEach((c,i)=>{const r=DATA.base.risk[i];if(r===null||c<0.25)return;pts.push([c,1-r]);});
+  const yMin=0.88;
+  const X=c=>L+(c-0.25)/(1-0.25)*(W-L-R);
+  const Y=p=>T+(1-(p-yMin)/(1-yMin))*(H-T-B);
+  let s=`<line class="axis" x1="${L}" y1="${H-B}" x2="${W-R}" y2="${H-B}"/><line class="axis" x1="${L}" y1="${T}" x2="${L}" y2="${H-B}"/>`;
+  [0.9,0.95,1].forEach(p=>{s+=`<line class="axis" x1="${L}" y1="${Y(p)}" x2="${W-R}" y2="${Y(p)}" stroke-dasharray="2 4"/><text x="${L-8}" y="${Y(p)+3}" text-anchor="end">${(p*100).toFixed(0)}%</text>`;});
+  [0.4,0.6,0.8,1].forEach(c=>{s+=`<text x="${X(c)}" y="${H-B+16}" text-anchor="middle">${(c*100).toFixed(0)}%</text>`;});
+  s+=`<text x="${W-R}" y="${H-4}" text-anchor="end">coverage &#8594;</text>`;
+  s+=`<path class="plot-live" d="${pts.map((p,i)=>(i?"L":"M")+X(p[0]).toFixed(1)+" "+Y(p[1]).toFixed(1)).join(" ")}"/>`;
+  if(naive) s+=`<g><line x1="${X(naive.coverage)}" y1="${Y(1-naive.risk)-9}" x2="${X(naive.coverage)}" y2="${Y(1-naive.risk)+9}" stroke="var(--bound)" stroke-width="2"/><line x1="${X(naive.coverage)-9}" y1="${Y(1-naive.risk)}" x2="${X(naive.coverage)+9}" y2="${Y(1-naive.risk)}" stroke="var(--bound)" stroke-width="2"/><text x="${X(naive.coverage)}" y="${Y(1-naive.risk)-16}" text-anchor="middle" fill="var(--bound)">tuned</text></g>`;
+  if(cert) s+=`<g class="marker-certified"><circle cx="${X(cert.coverage)}" cy="${Y(1-cert.risk)}" r="6" fill="var(--instrument)"/><text x="${X(cert.coverage)}" y="${Y(1-cert.risk)-14}" text-anchor="middle" fill="var(--instrument)">certified</text></g>`;
+  svg.innerHTML=`<title id="plot-title">Precision against coverage across every confidence threshold</title>`+s;
+}
+
+let currentTheta=null, currentAlpha=0.05;
+
+function updateDial(){
+  const i=+$("target").value, key=TARGETS[i], alpha=parseFloat(key);
+  currentAlpha=alpha;
+  const cert=DATA.certified[key], naive=DATA.naive[key];
+  [...ticks.children].forEach((s,j)=>s.dataset.on=j===i?"1":"0");
+
+  const dial=$("dial"), stamp=$("stamp");
+  if(cert){
+    currentTheta=cert.theta;
+    dial.classList.remove("dead"); stamp.classList.remove("refused");
+    $("cov").textContent=pct(cert.coverage);
+    $("cov-sub").textContent=Math.round(cert.coverage*DATA.meta.test)+" of "+DATA.meta.test+" tickets";
+    $("err").textContent=pct(cert.risk);
+    $("stamp-word").textContent="Certified";
+    $("stamp-line").innerHTML="threshold <b>&#952; = "+cert.theta.toFixed(3)+"</b><br>error held at or below <b>"+(alpha*100).toFixed(0)+"%</b>";
+    $("side-title").textContent="What the stamp means";
+    $("side-body").textContent="The threshold was selected by risk control on a calibration sample the model never trained on, with the family-wise error across the whole threshold grid held at 10%.";
+  }else{
+    currentTheta=null;
+    dial.classList.add("dead"); stamp.classList.add("refused");
+    $("cov").textContent="none";
+    $("cov-sub").textContent="nothing is routed automatically";
+    $("err").textContent="—";
+    $("stamp-word").textContent="Cannot certify";
+    $("stamp-line").innerHTML="no threshold on the grid clears <b>"+(alpha*100).toFixed(0)+"%</b> error with the confidence required";
+    $("side-title").textContent="The instrument is refusing";
+    $("side-body").innerHTML = naive
+      ? "This is the behaviour worth paying for. Threshold tuning, on the same calibration sample, returns a cutoff anyway and reports <b>"+pct(naive.coverage)+"</b> coverage for it. The red cross on the plot is that answer. Risk control declines instead."
+      : "Asked for something the calibration sample cannot support, it declines instead of returning a threshold that would look fine now and fail in production.";
+  }
+  drawPlot(cert,naive);
+  updateTrials(key);
+  updateDrift();
+}
+
+function updateTrials(key){
+  const t=DATA.trials[String(parseFloat(key))];
+  const cmp=document.querySelector(".compare");
+  if(!t||!t["fixed sequence"]||!t["fixed sequence"].certified){
+    cmp.style.display="none";
+    $("cmp-note").textContent="The repeated-trial comparison was run at the 95% and 97% targets only, so there is nothing to show at this one. Move the dial to either of those.";
+    return;
+  }
+  cmp.style.display="";
+  $("cmp-note").textContent="The obvious alternative is to sweep the cutoff on held-out data and keep whichever one clears the target. It reports better coverage. Over 15 independent splits it also misses the target it promised, repeatedly, and no single run reveals that.";
+  const f=t["fixed sequence"], n=t["naive tuning"];
+  $("cmp-cert-cov").textContent=pct(f.mean_coverage);
+  $("cmp-cert-breach").textContent=(f.breach_rate*100).toFixed(0)+"%";
+  $("cmp-naive-cov").textContent=pct(n.mean_coverage);
+  $("cmp-naive-breach").textContent=(n.breach_rate*100).toFixed(0)+"%";
+}
+
+/* ---------- drift ---------- */
+let mode="mix";
+const sevTicks=$("sev-ticks");
+
+function conditions(){return mode==="mix"?DATA.mix:DATA.taxonomy}
+
+function labelFor(c){
+  return mode==="mix" ? "TV "+c.tv.toFixed(2) : (c.fraction*100).toFixed(0)+"%";
+}
+
+function buildSevTicks(){
+  const cs=conditions();
+  $("severity").max=cs.length-1;
+  if(+$("severity").value>cs.length-1) $("severity").value=cs.length-1;
+  sevTicks.innerHTML="";
+  cs.forEach(c=>{const s=document.createElement("span");s.textContent=labelFor(c);sevTicks.appendChild(s);});
+  $("sev-label").textContent = mode==="mix"
+    ? "How far the category mix has moved (total variation distance)"
+    : "Share of the largest category that has been redefined";
+}
+
+function nearestGrid(theta){
+  let best=0,bd=9;
+  DATA.grid.forEach((g,i)=>{const d=Math.abs(g-theta);if(d<bd){bd=d;best=i;}});
+  return best;
+}
+
+function updateDrift(){
+  const cs=conditions(), i=Math.min(+$("severity").value,cs.length-1), c=cs[i];
+  [...sevTicks.children].forEach((s,j)=>s.dataset.on=j===i?"1":"0");
+
+  if(currentTheta===null){
+    $("g-cov").style.width="0%"; $("g-err").style.width="0%";
+    $("g-cov-v").textContent="—"; $("g-err-v").textContent="—";
+    $("drift-verdict").className="drift-verdict";
+    $("drift-verdict").textContent="Nothing is certified at this precision target, so there is no threshold to stress.";
+    return;
+  }
+
+  const gi=nearestGrid(currentTheta);
+  const cov=c.coverage[gi], risk=c.risk[gi];
+  const scale=Math.max(currentAlpha*2.5,0.18);
+
+  $("g-cov").style.width=(cov*100)+"%";
+  $("g-cov-v").textContent=pct(cov);
+  const over=risk>currentAlpha;
+  $("g-err").style.width=Math.min(risk/scale*100,100)+"%";
+  $("g-err").classList.toggle("over",over);
+  $("g-err-v").textContent=pct(risk);
+  $("g-bound").style.left=(currentAlpha/scale*100)+"%";
+  $("g-bound-tag").textContent=(currentAlpha*100).toFixed(0)+"% bound";
+
+  const base=cs[0], baseCov=base.coverage[gi];
+  const v=$("drift-verdict");
+  v.className="drift-verdict"+(over?" broken":"");
+  if(mode==="mix"){
+    v.innerHTML = over
+      ? "The mix has moved far enough to break the guarantee at this target."
+      : "Coverage has fallen from <b>"+pct(baseCov)+"</b> to <b>"+pct(cov)+"</b> while the error stays under the bound. Unfamiliar tickets score low and get held back, so the system pays for the drift in automation rather than in mistakes. <b>You can see this happening.</b>";
+  }else{
+    v.innerHTML = over
+      ? "The error has crossed the bound while coverage sits at <b>"+pct(cov)+"</b>, unchanged from <b>"+pct(baseCov)+"</b>. The tickets still look familiar and the model stays confident; the right answer moved underneath it. <b>Nothing inside the system detects this.</b> Only ground truth coming back from production does, which is why capturing every manual re-route is a requirement rather than a refinement."
+      : "Coverage is <b>"+pct(cov)+"</b> against a baseline of <b>"+pct(baseCov)+"</b>, and the error is still under the bound. Push the redefinition further.";
+  }
+}
+
+function setMode(m){
+  mode=m;
+  $("mode-mix").setAttribute("aria-pressed",m==="mix");
+  $("mode-tax").setAttribute("aria-pressed",m==="tax");
+  $("severity").value=0;
+  buildSevTicks(); updateDrift();
+}
+
+/* ---------- evidence ---------- */
+$("evidence").innerHTML=DATA.evidence.map(e=>`
+  <article class="ev">
+    <div class="ev-head">
+      <span class="tag ${e.routed?"routed":"held"}">${e.routed?"Routed automatically":"Held for a human"}</span>
+      <span class="ev-cat">${esc(e.predicted)}</span>
+      <span class="ev-conf">confidence ${e.confidence.toFixed(3)}${e.predicted!==e.true?" &middot; actually "+esc(e.true):""}</span>
+    </div>
+    <p class="ev-text">${esc(e.excerpt)}</p>
+    <div class="ev-because">Because of these archive documents</div>
+    ${e.neighbours.map(n=>`<div class="nb"><span class="nb-cat">${esc(n.category)}</span><span>${esc(n.excerpt)}</span><span class="nb-sim">${n.similarity.toFixed(3)}</span></div>`).join("")}
+  </article>`).join("");
+
+/* ---------- wiring ---------- */
+$("target").addEventListener("input",updateDial);
+$("severity").addEventListener("input",updateDrift);
+$("mode-mix").addEventListener("click",()=>setMode("mix"));
+$("mode-tax").addEventListener("click",()=>setMode("tax"));
+buildSevTicks();
+updateDial();
+</script>
+</body>
+</html>

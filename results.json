@@ -1,0 +1,402 @@
+{
+  "corpus": {
+    "classes": 53,
+    "index": 5435,
+    "calibration": 1813,
+    "test": 1810
+  },
+  "hyperparameters": {
+    "k": 40,
+    "power": 5.0,
+    "accuracy": 0.919793966151582,
+    "score": 0.9919651551087144
+  },
+  "unconditional_accuracy": {
+    "calibration": 0.918918918918919,
+    "test": 0.9220994475138121
+  },
+  "dial": {
+    "0.1": {
+      "fixed sequence": {
+        "certified": true,
+        "threshold": 0.185,
+        "coverage": 0.9966850828729282,
+        "risk": 0.0770509977827051
+      },
+      "Bonferroni grid": {
+        "certified": true,
+        "threshold": 0.33,
+        "coverage": 0.9718232044198895,
+        "risk": 0.061398521887436046
+      },
+      "naive tuning": {
+        "certified": true,
+        "threshold": 0.0,
+        "coverage": 1.0,
+        "risk": 0.07790055248618785
+      }
+    },
+    "0.05": {
+      "fixed sequence": {
+        "certified": true,
+        "threshold": 0.595,
+        "coverage": 0.8718232044198895,
+        "risk": 0.020278833967046894
+      },
+      "Bonferroni grid": {
+        "certified": true,
+        "threshold": 0.705,
+        "coverage": 0.8270718232044199,
+        "risk": 0.014696058784235137
+      },
+      "naive tuning": {
+        "certified": true,
+        "threshold": 0.475,
+        "coverage": 0.9232044198895027,
+        "risk": 0.03770197486535009
+      }
+    },
+    "0.03": {
+      "fixed sequence": {
+        "certified": true,
+        "threshold": 0.75,
+        "coverage": 0.8011049723756906,
+        "risk": 0.011034482758620689
+      },
+      "Bonferroni grid": {
+        "certified": true,
+        "threshold": 0.905,
+        "coverage": 0.6889502762430939,
+        "risk": 0.006415396952686447
+      },
+      "naive tuning": {
+        "certified": true,
+        "threshold": 0.625,
+        "coverage": 0.8596685082872928,
+        "risk": 0.018637532133676093
+      }
+    },
+    "0.02": {
+      "fixed sequence": {
+        "certified": true,
+        "threshold": 0.895,
+        "coverage": 0.6983425414364641,
+        "risk": 0.006329113924050633
+      },
+      "Bonferroni grid": {
+        "certified": false
+      },
+      "naive tuning": {
+        "certified": true,
+        "threshold": 0.725,
+        "coverage": 0.8171270718232044,
+        "risk": 0.013522650439486139
+      }
+    },
+    "0.01": {
+      "fixed sequence": {
+        "certified": false
+      },
+      "Bonferroni grid": {
+        "certified": false
+      },
+      "naive tuning": {
+        "certified": true,
+        "threshold": 0.86,
+        "coverage": 0.7303867403314918,
+        "risk": 0.006051437216338881
+      }
+    }
+  },
+  "analytics": {
+    "0.75": {
+      "best_composite": 0.95207,
+      "at_coverage": 0.89006,
+      "at_precision": 0.97703,
+      "full_automation": 0.9221,
+      "all_manual": 0.75
+    },
+    "0.85": {
+      "best_composite": 0.9634,
+      "at_coverage": 0.88122,
+      "at_precision": 0.97868,
+      "full_automation": 0.9221,
+      "all_manual": 0.85
+    },
+    "0.95": {
+      "best_composite": 0.98309,
+      "at_coverage": 0.78343,
+      "at_precision": 0.99224,
+      "full_automation": 0.9221,
+      "all_manual": 0.95
+    }
+  },
+  "per_class": {
+    "0.05": {
+      "global_coverage": 0.8718232044198895,
+      "global_risk": 0.020278833967046894,
+      "per_class_coverage": 0.41934,
+      "per_class_risk": 0.00791,
+      "certified": 1,
+      "classes": 43,
+      "min_items_to_certify": 317,
+      "min_items_unsplit": 141
+    },
+    "0.03": {
+      "global_coverage": 0.8011049723756906,
+      "global_risk": 0.011034482758620689,
+      "per_class_coverage": 0.0,
+      "per_class_risk": null,
+      "certified": 0,
+      "classes": 43,
+      "min_items_to_certify": 527,
+      "min_items_unsplit": 235
+    }
+  },
+  "evidence_samples": [
+    {
+      "predicted": "gold",
+      "true": "gold",
+      "confidence": 0.8792108343914162,
+      "routed": true,
+      "evidence": [
+        [
+          719,
+          "gold",
+          0.6250506043434143
+        ],
+        [
+          5427,
+          "gold",
+          0.6054649353027344
+        ],
+        [
+          3964,
+          "gold",
+          0.5878715515136719
+        ]
+      ]
+    },
+    {
+      "predicted": "meal-feed",
+      "true": "grain",
+      "confidence": 0.5130234099168759,
+      "routed": false,
+      "evidence": [
+        [
+          2061,
+          "meal-feed",
+          0.797710657119751
+        ],
+        [
+          4006,
+          "grain",
+          0.45707812905311584
+        ],
+        [
+          2736,
+          "acq",
+          0.44320088624954224
+        ]
+      ]
+    },
+    {
+      "predicted": "interest",
+      "true": "interest",
+      "confidence": 0.5697986890533738,
+      "routed": false,
+      "evidence": [
+        [
+          3379,
+          "interest",
+          0.9999998807907104
+        ],
+        [
+          5079,
+          "money-fx",
+          0.9999998807907104
+        ],
+        [
+          4871,
+          "interest",
+          0.9976943731307983
+        ]
+      ]
+    }
+  ],
+  "non_monotonicity": {
+    "steps": 197,
+    "increases": 53,
+    "increase_fraction": 0.26903553299492383,
+    "max_increase": 0.0001873528799500382
+  },
+  "temporal": {
+    "0.1": {
+      "coverage": 1.0,
+      "risk": 0.09631949882537197
+    },
+    "0.05": {
+      "coverage": 0.8841033672670321,
+      "risk": 0.03808680248007086
+    },
+    "0.03": {
+      "coverage": 0.8007047768206734,
+      "risk": 0.022493887530562348
+    }
+  },
+  "drift": [
+    {
+      "severity": 0.0,
+      "tv": 0.0,
+      "coverage": 0.8718232044198895,
+      "risk": 0.020278833967046894
+    },
+    {
+      "severity": 0.1,
+      "tv": 0.04364640883977901,
+      "coverage": 0.8723756906077348,
+      "risk": 0.017099430018999367
+    },
+    {
+      "severity": 0.2,
+      "tv": 0.05911602209944752,
+      "coverage": 0.86353591160221,
+      "risk": 0.019193857965451054
+    },
+    {
+      "severity": 0.3,
+      "tv": 0.07624309392265194,
+      "coverage": 0.8580110497237569,
+      "risk": 0.022537025112685124
+    },
+    {
+      "severity": 0.5,
+      "tv": 0.13425414364640884,
+      "coverage": 0.8325966850828729,
+      "risk": 0.025879230258792303
+    },
+    {
+      "severity": 0.8,
+      "tv": 0.20165745856353592,
+      "coverage": 0.8171270718232044,
+      "risk": 0.027045300878972278
+    },
+    {
+      "severity": 1.0,
+      "tv": 0.2784530386740332,
+      "coverage": 0.7939226519337017,
+      "risk": 0.031315240083507306
+    },
+    {
+      "severity": 1.2,
+      "tv": 0.3629834254143646,
+      "coverage": 0.7640883977900552,
+      "risk": 0.03036876355748373
+    },
+    {
+      "severity": 1.4,
+      "tv": 0.41657458563535915,
+      "coverage": 0.7337016574585635,
+      "risk": 0.04292168674698795
+    },
+    {
+      "severity": 1.6,
+      "tv": 0.4685082872928177,
+      "coverage": 0.7298342541436464,
+      "risk": 0.04390613171839516
+    },
+    {
+      "severity": 1.75,
+      "tv": 0.5149171270718232,
+      "coverage": 0.6983425414364641,
+      "risk": 0.040348101265822785
+    },
+    {
+      "severity": 1.95,
+      "tv": 0.556353591160221,
+      "coverage": 0.6878453038674033,
+      "risk": 0.04176706827309237
+    }
+  ],
+  "drift_breach": null,
+  "taxonomy_drift": [
+    {
+      "fraction": 0.0,
+      "coverage": 0.8718232044198895,
+      "risk": 0.020278833967046894
+    },
+    {
+      "fraction": 0.02,
+      "coverage": 0.8718232044198895,
+      "risk": 0.030418250950570342
+    },
+    {
+      "fraction": 0.05,
+      "coverage": 0.8718232044198895,
+      "risk": 0.044993662864385296
+    },
+    {
+      "fraction": 0.08,
+      "coverage": 0.8718232044198895,
+      "risk": 0.058301647655259824
+    },
+    {
+      "fraction": 0.12,
+      "coverage": 0.8718232044198895,
+      "risk": 0.07731305449936629
+    },
+    {
+      "fraction": 0.2,
+      "coverage": 0.8718232044198895,
+      "risk": 0.11533586818757921
+    },
+    {
+      "fraction": 0.3,
+      "coverage": 0.8718232044198895,
+      "risk": 0.16223067173637515
+    }
+  ],
+  "taxonomy_breach": 0.08,
+  "trials": {
+    "0.05": {
+      "fixed sequence": {
+        "certified": 15,
+        "breach_rate": 0.0,
+        "mean_coverage": 0.9090607734806632,
+        "mean_risk": 0.03593652493291597
+      },
+      "Bonferroni grid": {
+        "certified": 15,
+        "breach_rate": 0.0,
+        "mean_coverage": 0.8648987108655618,
+        "mean_risk": 0.024154475466363408
+      },
+      "naive tuning": {
+        "certified": 15,
+        "breach_rate": 0.6666666666666666,
+        "mean_coverage": 0.9498342541436463,
+        "mean_risk": 0.05208935284481178
+      }
+    },
+    "0.03": {
+      "fixed sequence": {
+        "certified": 15,
+        "breach_rate": 0.0,
+        "mean_coverage": 0.8386003683241251,
+        "mean_risk": 0.019225077787444807
+      },
+      "Bonferroni grid": {
+        "certified": 15,
+        "breach_rate": 0.0,
+        "mean_coverage": 0.7463720073664825,
+        "mean_risk": 0.008406962396050837
+      },
+      "naive tuning": {
+        "certified": 15,
+        "breach_rate": 0.6,
+        "mean_coverage": 0.8932965009208104,
+        "mean_risk": 0.03098751273993234
+      }
+    }
+  }
+}
