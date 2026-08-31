@@ -91,20 +91,22 @@ What can be delivered at 100% is traceability. Every ticket carries how its cate
 
 ### 3.3 What a single global threshold hides
 
-Every figure above is one number over a mixture of 43 categories. That number is set by the categories carrying the volume, and it says nothing about the rest. A support desk cares about the difference: a category routed at 15% error inside a 2% aggregate is a team receiving one ticket in seven wrongly, and no aggregate reveals it.
+Every figure above is one number over a mixture of 53 categories. That number is set by the categories carrying the volume, and it says nothing about the rest. A support desk cares about the difference: a category routed at 15% error inside a 2% aggregate is a team receiving one ticket in seven wrongly, and no aggregate reveals it.
 
 Certifying each predicted category on its own calibration items removes the mixture. The confidence budget is split across categories, since certifying 43 of them is 43 hypothesis tests.
 
 | Target | One global threshold | Per category | Categories certified |
 |---|---|---|---|
-| 95% | coverage 87.2%, error 2.0% | coverage 41.9%, error 0.8% | **1 of 43** |
-| 97% | coverage 80.1%, error 1.1% | coverage 0.0% | **0 of 43** |
+| 95% | coverage 87.2%, error 2.0% | coverage 41.9%, error 0.8% | **1 of 53** |
+| 97% | coverage 80.1%, error 1.1% | coverage 0.0% | **0 of 53** |
 
 At the 95% target, the one category that certifies holds 805 calibration items. The median uncertified category holds 7.
 
+**Two denominators, and the smaller one flatters the result.** The certification routine runs over the 43 categories the classifier ever predicts, so read from inside the method the figure is 1 of 43. But 10 categories are never predicted even once: `cpu`, `dlr`, `lead`, `lei`, `meal-feed`, `nickel`, `silver`, `tea`, `wpi`, `yen`, each holding between one and five tickets. They fail more completely than the 42 that merely fail to certify, and they are equally unautomatable. The figure that describes what a support desk would actually get is **1 of 53**.
+
 **How much data a per-category guarantee costs.** A category needs roughly **317 calibration items** before any threshold can be certified for it at a 5% target, and 141 without the across-category correction. Sample size is what binds, not multiplicity. That number is the concrete price of moving from an aggregate promise to a per-team one.
 
-**This is the honest reading of the aggregate figures.** The 87.2% coverage in 3.1 is real, but the guarantee behind it is a statement about the mixture, not about any particular team's queue. Splitting it into per-category guarantees at this data volume leaves 42 of 43 categories on manual routing. Both facts are true at once, and a proposal that quotes the first without the second is quoting half a result.
+**This is the honest reading of the aggregate figures.** The 87.2% coverage in 3.1 is real, but the guarantee behind it is a statement about the mixture, not about any particular team's queue. Splitting it into per-category guarantees at this data volume leaves 52 of 53 categories on manual routing. Both facts are true at once, and a proposal that quotes the first without the second is quoting half a result.
 
 ### 3.4 Certified versus tuned, over repeated trials
 
@@ -199,7 +201,7 @@ A claim measured once is an anecdote. The 67% breach rate in 3.4 is the only fig
 
 **A known improvement was not taken.** Maurer-Pontil is not the tightest available bound. Published comparisons put its interval width at roughly 1.44 times the oracle at n = 1000, against 1.08 for the self-normalised Waudby-Smith and Ramdas bound. Adopting it would buy further coverage at the same guarantee.
 
-**The per-category result caps what this harness can claim.** Section 3.3 shows that at this data volume only one category of 43 can carry its own guarantee. Every headline figure in 3.1 is therefore an aggregate statement, and the harness cannot demonstrate a per-team guarantee on a realistic taxonomy. Doing so needs roughly 317 labelled calibration items per category, which is a data problem rather than a method problem.
+**The per-category result caps what this harness can claim.** Section 3.3 shows that at this data volume only one category of 53 can carry its own guarantee. Every headline figure in 3.1 is therefore an aggregate statement, and the harness cannot demonstrate a per-team guarantee on a realistic taxonomy. Doing so needs roughly 317 labelled calibration items per category, which is a data problem rather than a method problem.
 
 ---
 
