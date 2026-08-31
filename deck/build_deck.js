@@ -537,14 +537,14 @@ function body(s, x, y, w, h, text, size, color) {
       fontFace: BODY, fontSize: 13.5, color: ICE, lineSpacing: 18,
     });
   });
-  s.addText("Report, source, tests and the interactive version: github.com/thomas2143", {
+  s.addText("Report, source, tests and the interactive version: github.com/thomas2143/TechDrive", {
     x: 0.9, y: 6.5, w: 11, h: 0.4, isTextBox: true, margin: 0,
     fontFace: DATA, fontSize: 12, color: ICE,
   });
   s.addNotes(
     "Close on what the client buys, not on what I built.\n\n" +
     "If there is time, the interactive page is the thing to open live: drag the precision target to 99% and let them watch the instrument refuse.\n\n" +
-    "Update this URL to the repository before presenting."
+    "Repository: github.com/thomas2143/TechDrive"
   );
 }
 
