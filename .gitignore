@@ -1,0 +1,11 @@
+# NLTK downloads the Reuters corpus on first run: 6 MB of third-party data
+# that has no business in this repository.
+nltk_data/
+
+# Tool caches
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+
+# LibreOffice and pdftoppm leave these behind when rendering the deck for QA
+deck/slide-*.jpg
