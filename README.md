@@ -29,7 +29,7 @@ The threshold-setting mechanism was implemented end to end on a public corpus ch
 
 **Tuning a threshold on held-out data misses its own target in 67% of trials.** Risk control misses it in none, at a cost of 4 to 9 points of coverage. That failure is invisible on any single run, and a single run is what a demo shows.
 
-**Only one category in 43 can carry its own guarantee.** A global threshold reports one number over a mixture; split per category, the long tail has nowhere near enough calibration data. Roughly 300 labelled examples per category are needed before a per-team promise can be made at all.
+**Only one category in 53 can carry its own guarantee.** A global threshold reports one number over a mixture; split per category, the long tail has nowhere near enough calibration data. Roughly 300 labelled examples per category are needed before a per-team promise can be made at all.
 
 **One kind of drift is safe and one is invisible.** When the category mix moves, coverage falls and the guarantee holds: the system pays in automation rather than in mistakes. When the taxonomy is redefined, coverage does not move by a tenth of a point while the error rate triples. Nothing inside the system detects the second kind, which is why capturing every manual re-route is a requirement of the design rather than a nicety.
 
