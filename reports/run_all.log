@@ -1,0 +1,184 @@
+======================================================================
+1. CORPUS
+======================================================================
+classes                        53
+index / calibration / test     5435 / 1813 / 1810
+volume share of top 5 classes  79.1%
+classes with <50 index docs    42 of 53
+median index docs per class    14
+
+======================================================================
+2. HYPERPARAMETERS  (selected on a held-out slice of INDEX only)
+======================================================================
+  k = 40, power = 5.0  (rank-score 0.9920)
+  unconditional accuracy: calibration 0.919 test 0.922
+
+======================================================================
+3. THE DIAL  (precision is chosen, coverage is measured)
+======================================================================
+ target | method               |  theta | coverage |   risk | verdict
+--------------------------------------------------------------------------
+   90%  | fixed sequence       |  0.185 |   99.7% | 0.077 | holds
+   90%  | Bonferroni grid      |  0.330 |   97.2% | 0.061 | holds
+   90%  | naive tuning         |  0.000 |  100.0% | 0.078 | holds
+
+   95%  | fixed sequence       |  0.595 |   87.2% | 0.020 | holds
+   95%  | Bonferroni grid      |  0.705 |   82.7% | 0.015 | holds
+   95%  | naive tuning         |  0.475 |   92.3% | 0.038 | holds
+
+   97%  | fixed sequence       |  0.750 |   80.1% | 0.011 | holds
+   97%  | Bonferroni grid      |  0.905 |   68.9% | 0.006 | holds
+   97%  | naive tuning         |  0.625 |   86.0% | 0.019 | holds
+
+   98%  | fixed sequence       |  0.895 |   69.8% | 0.006 | holds
+   98%  | Bonferroni grid      |      - |        - |      - | abstains
+   98%  | naive tuning         |  0.725 |   81.7% | 0.014 | holds
+
+   99%  | fixed sequence       |      - |        - |      - | abstains
+   99%  | Bonferroni grid      |      - |        - |      - | abstains
+   99%  | naive tuning         |  0.860 |   73.0% | 0.006 | holds
+
+======================================================================
+3b. ANALYTICS QUALITY  (the brief asks for 95% precision and 100% clean analytics)
+======================================================================
+  Composite = share of ALL tickets that end up correctly tagged.
+  Auto-routed tickets are tagged at model precision; the rest by first line.
+  The first-line rate is an assumption, not a measurement here, so it is swept.
+
+  first line at 75%
+    best composite   95.2%  at coverage 89.0%, model precision 97.7%
+    full automation  92.2%
+    all manual       75.0%
+  first line at 85%
+    best composite   96.3%  at coverage 88.1%, model precision 97.9%
+    full automation  92.2%
+    all manual       85.0%
+  first line at 95%
+    best composite   98.3%  at coverage 78.3%, model precision 99.2%
+    full automation  92.2%
+    all manual       95.0%
+
+  No operating point reaches 100%. Raising precision past the optimum lowers
+  composite quality, because every ticket withheld goes to the less accurate path.
+
+======================================================================
+3c. PER-CATEGORY CERTIFICATION  (what a single global threshold hides)
+======================================================================
+  A global threshold is set by the categories carrying the volume. The long
+  tail rides underneath it, auto-routed on a guarantee never established for
+  those categories. Certifying each class on its own calibration items removes
+  that, and most classes then fail to certify.
+
+  target 95%
+    one global threshold : coverage  87.2%  error 0.020
+    per category         : coverage  41.9%  error 0.008
+    categories certified : 1 of 43 the classifier ever predicts
+                           1 of 53 in the taxonomy. The other 10 are never
+                           predicted at all, so they cannot be automated either
+      certified classes hold 805 calibration items or more
+      uncertified classes: median 7 items, largest 440
+    minimum calibration items for any class to certify: 317
+      (141 without the across-class correction, so sample size binds, not multiplicity)
+
+  target 97%
+    one global threshold : coverage  80.1%  error 0.011
+    per category         : coverage   0.0%  error nan
+    categories certified : 0 of 43 the classifier ever predicts
+                           0 of 53 in the taxonomy. The other 10 are never
+                           predicted at all, so they cannot be automated either
+      uncertified classes: median 8 items, largest 805
+    minimum calibration items for any class to certify: 527
+      (235 without the across-class correction, so sample size binds, not multiplicity)
+
+
+======================================================================
+4. EVIDENCE  (what a routed ticket carries with it)
+======================================================================
+
+  ticket #0  ->  gold  (confidence 0.879, auto-routed, true class gold)
+      because index doc   719 [gold] similarity 0.625
+      because index doc  5427 [gold] similarity 0.605
+      because index doc  3964 [gold] similarity 0.588
+
+  ticket #7  ->  meal-feed  (confidence 0.513, manual moderation, true class grain)
+      because index doc  2061 [meal-feed] similarity 0.798
+      because index doc  4006 [grain] similarity 0.457
+      because index doc  2736 [acq] similarity 0.443
+
+  ticket #8  ->  interest  (confidence 0.570, manual moderation, true class interest)
+      because index doc  3379 [interest] similarity 1.000
+      because index doc  5079 [money-fx] similarity 1.000
+      because index doc  4871 [interest] similarity 0.998
+
+======================================================================
+5. NON-MONOTONICITY  (reported with its magnitude, not just its frequency)
+======================================================================
+  risk increases at 53/197 grid steps (26.9%), largest single increase +0.00019
+
+======================================================================
+6. DRIFT  (where the certified guarantee stops holding)
+======================================================================
+  6a. natural temporal split
+      target  90%: coverage 100.0% risk 0.096  holds
+      target  95%: coverage 88.4% risk 0.038  holds
+      target  97%: coverage 80.1% risk 0.022  holds
+
+  6b. MODE 1: class mix shifts. Threshold certified once, never recalibrated.
+      severity |  TV dist | coverage |   risk | status
+          0.00 |    0.000 |   87.2% | 0.020 | holds
+          0.10 |    0.044 |   87.2% | 0.017 | holds
+          0.20 |    0.059 |   86.4% | 0.019 | holds
+          0.30 |    0.076 |   85.8% | 0.023 | holds
+          0.50 |    0.134 |   83.3% | 0.026 | holds
+          0.80 |    0.202 |   81.7% | 0.027 | holds
+          1.00 |    0.278 |   79.4% | 0.031 | holds
+          1.20 |    0.363 |   76.4% | 0.030 | holds
+          1.40 |    0.417 |   73.4% | 0.043 | holds
+          1.60 |    0.469 |   73.0% | 0.044 | holds
+          1.75 |    0.515 |   69.8% | 0.040 | holds
+          1.95 |    0.556 |   68.8% | 0.042 | holds
+      no breach at any shift tested: abstention absorbs it, coverage pays
+
+  6c. MODE 2: taxonomy is redefined. Same threshold, never recalibrated.
+      relabelled | coverage |   risk | status
+             0% |   87.2% | 0.020 | holds
+             2% |   87.2% | 0.030 | holds
+             5% |   87.2% | 0.045 | holds
+             8% |   87.2% | 0.058 | BROKEN
+            12% |   87.2% | 0.077 | BROKEN
+            20% |   87.2% | 0.115 | BROKEN
+            30% |   87.2% | 0.162 | BROKEN
+      breaks once 8% of the largest category is redefined,
+      with coverage unchanged throughout: nothing internal detects it
+
+======================================================================
+7. REPEATED TRIALS  (15 independent splits, delta = 0.1)
+======================================================================
+  trial 1/15
+  trial 2/15
+  trial 3/15
+  trial 4/15
+  trial 5/15
+  trial 6/15
+  trial 7/15
+  trial 8/15
+  trial 9/15
+  trial 10/15
+  trial 11/15
+  trial 12/15
+  trial 13/15
+  trial 14/15
+  trial 15/15
+
+ target | method               | certified | breaches | mean cov
+------------------------------------------------------------------
+   95%  | fixed sequence       |   15/15   |      0% |   90.9%
+   95%  | Bonferroni grid      |   15/15   |      0% |   86.5%
+   95%  | naive tuning         |   15/15   |     67% |   95.0%
+
+   97%  | fixed sequence       |   15/15   |      0% |   83.9%
+   97%  | Bonferroni grid      |   15/15   |      0% |   74.6%
+   97%  | naive tuning         |   15/15   |     60% |   89.3%
+
+results written to /home/claude/selective-routing/reports/results.json
+figures written
