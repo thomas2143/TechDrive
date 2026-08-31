@@ -13,6 +13,7 @@ ignore = ["E501", "RUF046"]
 "run_all.py" = ["E402", "PLC0415"]
 "export_web_data.py" = ["E402"]
 "make_figures.py" = ["E402"]
+"deck/deck_figures.py" = ["E402"]
 "tests/test_conformal.py" = ["E402", "PLC0415"]  # corpus loaders imported inside the slow tests only
 # nltk is imported lazily inside the loaders so importing the module does not
 # pull in the corpus machinery.
