@@ -128,13 +128,13 @@ input[type=range]:active::-webkit-slider-thumb{transform:scaleY(1.12)}
 .switch button:focus-visible{outline:2px solid var(--instrument);outline-offset:2px}
 
 .gauges{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:26px}
-.gauge .metric-label{margin-bottom:12px}
+.gauge .metric-label{margin-bottom:30px}
 .bar{position:relative;height:52px;background:var(--panel-sunk);border:1px solid var(--rule)}
 .bar-fill{position:absolute;left:0;top:0;bottom:0;background:var(--instrument);transition:width .45s cubic-bezier(.2,.7,.3,1)}
 .bar-fill.error{background:var(--hold)}
 .bar-fill.error.over{background:var(--bound)}
 .bound-line{position:absolute;top:-6px;bottom:-6px;width:2px;background:var(--bound)}
-.bound-tag{position:absolute;top:-22px;transform:translateX(-50%);font-family:var(--data);font-size:10px;color:var(--bound);white-space:nowrap}
+.bound-tag{position:absolute;top:-19px;left:0;transform:translateX(-50%);font-family:var(--data);font-size:10px;line-height:1;color:var(--bound);white-space:nowrap}
 .gauge-read{font-family:var(--data);font-size:13px;color:var(--muted);margin-top:10px}
 .gauge-read b{color:var(--ink);font-weight:600;font-size:1.05rem}
 .drift-verdict{
