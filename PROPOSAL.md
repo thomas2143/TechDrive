@@ -370,7 +370,7 @@ The specification's five criteria are binary and unmeasured. Each is preserved b
 
 **What a per-category guarantee costs, measured.** The criterion above is written per category deliberately, and the harness in section 10 quantifies what that demands. Certifying each category on its own calibration data rather than relying on an aggregate requires roughly 300 labelled examples per category. Below that, a distribution-free guarantee cannot be established at a 5% error target, and the category stays on manual routing.
 
-On the harness corpus, where the median category held single-digit calibration examples, exactly one category of 43 could carry its own guarantee. The aggregate figure looked healthy at 87% coverage and 2% error; split per category it left 42 of 43 unautomatable.
+On the harness corpus, where the median category held single-digit calibration examples, exactly one category of 53 could carry its own guarantee. The aggregate figure looked healthy at 87% coverage and 2% error; split per category it left 52 of 53 unautomatable, and 10 of those were never even predicted by the classifier, which is a failure mode below the level a per-category guarantee can describe.
 
 This has a direct consequence for Phase 0. The labelling exercise should be sized not by a global sample target but by how many categories TechDrive wants automated, at roughly 300 examples each. Categories that cannot reach that count are not failures of the model, they are categories that stay with first line until the archive supports the promise. It also means the correct reading of any aggregate accuracy figure, including the 95% in the task description, is that it is a statement about the ticket mixture and not about what any individual team receives.
 
