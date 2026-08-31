@@ -186,7 +186,10 @@ def main() -> None:
         print(f"  target {1 - alpha:.0%}")
         print(f"    one global threshold : coverage {g['coverage']:>6.1%}  error {g['risk']:.3f}")
         print(f"    per category         : coverage {accepted.mean():>6.1%}  error {risk:.3f}")
-        print(f"    categories certified : {len(certified)} of {len(per)}")
+        never = corpus.n_classes - len(per)
+        print(f"    categories certified : {len(certified)} of {len(per)} the classifier ever predicts")
+        print(f"                           {len(certified)} of {corpus.n_classes} in the taxonomy. The other {never} are never")
+        print("                           predicted at all, so they cannot be automated either")
         if certified:
             sizes = sorted(counts[c] for c in certified)
             print(f"      certified classes hold {sizes[0]} calibration items or more")
